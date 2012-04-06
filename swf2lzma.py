@@ -35,15 +35,15 @@ def convert(infile, outfile):
     # 5 accounts for lzma props
     zsize = len(zdata) - 5
 
-    zheader = bytearray(swf_data[0:12])
-    zheader[0]  = 'Z'
+    zheader = list(struct.unpack("<12B", swf_data[0:12]))
+    zheader[0] = ord('Z')
     zheader[8]  = (zsize)       & 0xFF
     zheader[9]  = (zsize >> 8)  & 0xFF
     zheader[10] = (zsize >> 16) & 0xFF
     zheader[11] = (zsize >> 24) & 0xFF
 
     fo = open(outfile, 'wb')
-    fo.write(zheader)
+    fo.write(struct.pack("<12B", *zheader))
     fo.write(zdata)
     fo.close()
 
